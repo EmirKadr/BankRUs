@@ -1,6 +1,5 @@
 @BankRUs.Api_HostAddress = http://localhost:9000
 
-# ---------- Kreditvärde (GET) ----------
 
 ### Anna Svensson → 200, creditScore 71
 GET {{BankRUs.Api_HostAddress}}/api/customers/19900101-2010/credit-score
@@ -14,7 +13,6 @@ GET {{BankRUs.Api_HostAddress}}/api/customers/19780320-5678/credit-score
 ### Okänd kund → 404
 GET {{BankRUs.Api_HostAddress}}/api/customers/19990909-0000/credit-score
 
-# ---------- Lägg till kund (POST) ----------
 
 ### Ny kund utan skuld → 201, creditScore 100
 POST {{BankRUs.Api_HostAddress}}/api/customers
@@ -60,7 +58,6 @@ Content-Type: application/json
   "totalDebt": -1
 }
 
-# ---------- Uppdatera kund (PUT) ----------
 
 ### Erik betalar av skuld (180 000 → 90 000) → 200, creditScore 75
 PUT {{BankRUs.Api_HostAddress}}/api/customers/19850515-1234
@@ -98,7 +95,6 @@ Content-Type: application/json
   "totalDebt": 0
 }
 
-# ---------- Låneansökningar (POST) – kreditvärdet hämtas från kunden ----------
 
 ### Anna (71) → 201 Approved
 POST {{BankRUs.Api_HostAddress}}/api/loanapplications
