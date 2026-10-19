@@ -1,0 +1,157 @@
+@BankRUs.Api_HostAddress = http://localhost:9000
+
+# ---------- Kreditvärde (GET) ----------
+
+### Anna Svensson → 200, creditScore 71
+GET {{BankRUs.Api_HostAddress}}/api/customers/19900101-2010/credit-score
+
+### Erik Johansson → 200, creditScore 50
+GET {{BankRUs.Api_HostAddress}}/api/customers/19850515-1234/credit-score
+
+### Maria Lindberg → 200, creditScore 0
+GET {{BankRUs.Api_HostAddress}}/api/customers/19780320-5678/credit-score
+
+### Okänd kund → 404
+GET {{BankRUs.Api_HostAddress}}/api/customers/19990909-0000/credit-score
+
+# ---------- Lägg till kund (POST) ----------
+
+### Ny kund utan skuld → 201, creditScore 100
+POST {{BankRUs.Api_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19951111-4321",
+  "name": "Sara Ahmed",
+  "annualIncome": 400000,
+  "totalDebt": 0
+}
+
+### Samma kund igen → 409 Conflict
+POST {{BankRUs.Api_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19951111-4321",
+  "name": "Sara Ahmed",
+  "annualIncome": 400000,
+  "totalDebt": 0
+}
+
+### Felaktigt personnummer → 400
+POST {{BankRUs.Api_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "951111-4321",
+  "name": "Fel Format",
+  "annualIncome": 400000,
+  "totalDebt": 0
+}
+
+### Negativ skuld → 400
+POST {{BankRUs.Api_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19880808-8888",
+  "name": "Negativ Skuld",
+  "annualIncome": 400000,
+  "totalDebt": -1
+}
+
+# ---------- Uppdatera kund (PUT) ----------
+
+### Erik betalar av skuld (180 000 → 90 000) → 200, creditScore 75
+PUT {{BankRUs.Api_HostAddress}}/api/customers/19850515-1234
+Content-Type: application/json
+
+{
+  "annualIncome": 360000,
+  "totalDebt": 90000
+}
+
+### Återställ Erik → 200, creditScore 50
+PUT {{BankRUs.Api_HostAddress}}/api/customers/19850515-1234
+Content-Type: application/json
+
+{
+  "annualIncome": 360000,
+  "totalDebt": 180000
+}
+
+### Okänd kund → 404
+PUT {{BankRUs.Api_HostAddress}}/api/customers/19990909-0000
+Content-Type: application/json
+
+{
+  "annualIncome": 300000,
+  "totalDebt": 0
+}
+
+### Negativ inkomst → 400
+PUT {{BankRUs.Api_HostAddress}}/api/customers/19850515-1234
+Content-Type: application/json
+
+{
+  "annualIncome": -1,
+  "totalDebt": 0
+}
+
+# ---------- Låneansökningar (POST) – kreditvärdet hämtas från kunden ----------
+
+### Anna (71) → 201 Approved
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19900101-2010",
+  "amount": 100000
+}
+
+### Erik (50) → 201 Approved
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19850515-1234",
+  "amount": 50000
+}
+
+### Maria (0) → 201 Declined
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19780320-5678",
+  "amount": 750000
+}
+
+### Okänd kund → 201 Declined
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19990909-0000",
+  "amount": 20000
+}
+
+### Felaktigt personnummer → 400
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "9001012010",
+  "amount": 100000
+}
+
+### Belopp 0 → 400
+POST {{BankRUs.Api_HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19900101-2010",
+  "amount": 0
+}
+
+###
