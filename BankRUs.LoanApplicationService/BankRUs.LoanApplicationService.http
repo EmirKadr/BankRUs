@@ -1,0 +1,59 @@
+@HostAddress = http://localhost:9001
+
+# Starta även BankRUs.CreditScoreService (http://localhost:9000) – den hämtar kreditvärdet där.
+
+### Anna (71 i CreditScoreService) → 201 Approved
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19900101-2010",
+  "amount": 100000
+}
+
+### Erik (50 i CreditScoreService) → 201 Approved
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19850515-1234",
+  "amount": 50000
+}
+
+### Maria (0 i CreditScoreService) → 201 Declined
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19780320-5678",
+  "amount": 750000
+}
+
+### Okänd kund (404 i CreditScoreService) → 201 Declined
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19990909-0000",
+  "amount": 20000
+}
+
+### Felaktigt personnummer → 400
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "9001012010",
+  "amount": 100000
+}
+
+### Belopp 0 → 400
+POST {{HostAddress}}/api/loanapplications
+Content-Type: application/json
+
+{
+  "socialSecurityNumber": "19900101-2010",
+  "amount": 0
+}
+
+###
